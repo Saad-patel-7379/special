@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lovecraft Game Menu</title>
+    <style>
+       /* Load "Press Start 2P" font */
+        @font-face {
+            font-family: 'Press Start 2P';
+            src: url('font.woff2') format('woff2'),
+                 url('font.woff2') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Press Start 2P', sans-serif;
+        }
+        /* Important: Prevent font overriding */
+        #container, .button, #splash-text, #made-by, #settings-menu {
+            font-family: inherit;
+        }
+
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 1cm;
+        }
+
+        /* Container for the background image */
+        #bg-image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: calc(100% + 10vw);
+            height: 100%;
+            z-index: -1;
+            animation: background-shift 20s linear infinite;
+            transform: translateX(-5vw);
+        }
+        #bg-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        @keyframes background-shift {
+           0% {
+                transform: translateX(-5vw);
+            }
+            25% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(-5vw);
+            }
+            75% {
+                transform: translateX(-10vw);
+            }
+            100% {
+                transform: translateX(-5vw);
+            }
+        }
+
+        #logo {
+            width: 80%;
+            max-width: 600px;
+        }
+
+        #logo img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        /* Position splash text container */
+        #splash-text-container {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-top: 10px;
+        }
+
+        .button-container, #bottom-button-container {
+            width: 80%;
+            max-width: 600px;
+            margin-bottom: 2px;
+            position: relative;
+        }
+        .button-group {
+            margin-top: 30px;
+            width: 80%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            height: 40px;
+            background-color: rgba(128, 128, 128, 0.8);
+            border: none;
+            cursor: pointer;
+            margin-bottom: 2px;
+            text-align: center;
+            line-height: 40px;
+            color: #fff;
+            font-size: 0.8em;
+            box-sizing: border-box;
+            border-radius: 4px;
+            padding: 0 10px;
+            transition: transform 0.2s ease-in-out;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: rgba(100, 100, 100, 0.8);
+            transform: scale(1.05);
+        }
+
+        /* Gem icon styling - moved to COUPLEPLAYER */
+        .button-container:nth-child(2) .button::after {
+            content: '';
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            background-image: url('gem.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /*  Style for COUPLEPLAYER link */
+        .button-container:nth-child(2) a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: magenta;
+            line-height: 40px;
+        }
+
+        #bottom-button-container {
+            display: flex;
+            width: 80%;
+            max-width: 600px;
+            justify-content: space-between;
+            margin-top: 2px;
+        }
+
+        #bottom-button-container .button {
+            width: calc(50% - 5px);
+        }
+
+        /* Splash Text Styles */
+        #splash-text {
+          color: yellow;
+          font-size: 0.9em;
+          background-color: rgba(0, 0, 0, 0.5);
+          padding: 5px 10px;
+          border-radius: 5px;
+          display: none;
+          text-align: center;
+        }
+
+        /* Confetti Styles */
+       .confetti {
+            position: absolute;
+            left: 50%;
+            top: -10px;
+            width: 15px;
+            height: 15px;
+            background-image: url('decoration2.gif');
+            background-size: contain;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateX(-50%) translateY(0) rotate(0deg);
+                opacity: 1;
+             }
+            100% {
+                transform: translateX(-50%) translateY(100vh) rotate(720deg);
+                  opacity: 0;
+            }
+        }
+
+        /* "Made by" text */
+       #made-by {
+          position: absolute;
+          bottom: 10px;
+          right: 10px;
+          color: white;
+          font-size: 0.7em;
+          z-index: 0;
+         }
+
+        /* Settings Menu Styles */
+        #settings-menu {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 182, 193, 0.9); /* Light pink */
+            border: 2px solid pink;
+            border-radius: 10px;
+            padding: 20px;
+            z-index: 10;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 400px;
+        }
+
+        #settings-menu h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #8b0000;
+        }
+
+        .setting-option {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .setting-option label {
+            margin-right: 10px;
+            color: #8b0000;
+        }
+
+         /* Slider Styles */
+        .slider-container{
+            display: flex;
+	        align-items:center;
+            gap:5px;
+        }
+        input[type="range"] {
+            width: 70%;
+            appearance: none;
+           -webkit-appearance: none;
+            height: 10px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+           -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff69b4;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb { /* Firefox */
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff69b4;
+            cursor: pointer;
+        }
+        .heart {
+          font-size: 1em;
+          color: red;
+		 transition: font-size 0.3s ease;
+        }
+
+        #settings-menu button {
+                width: auto;
+                padding: 8px 15px;
+                margin-top:5px;
+        }
+
+        /* Close button styling */
+        #close-settings {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #8b0000;
+        }
+		/* Settings Menu Decorations */
+        .setting-decoration {
+           position: absolute; /*  Position absolutely within the menu */
+           opacity: 0.6;      /*  Semi-transparent */
+           pointer-events: none; /*  Don't interfere with clicks */
+          }
+        #decoration1 {
+           top: 10px;
+           left: 10px;
+           width: 50px;  /* Adjust size as needed */
+           height: auto;
+          }
+
+        #decoration2 {
+           bottom: 10px;
+           right: 10px;
+           width: 60px;  /* Adjust size as needed */
+           height: auto;
+         }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <!-- Background image container -->
+        <div id="bg-image-container">
+            <img src="bg.png" alt="Background">
+        </div>
+
+        <div id="logo">
+            <img src="logo.png" alt="Lovecraft Logo">
+        </div>
+
+        <div id="splash-text-container">
+           <div id="splash-text"></div>
+        </div>
+
+        <!-- Group buttons for spacing and centering -->
+        <div class="button-group">
+            <div class="button-container">
+                <button class="button" id="singleplayer-button" onclick="handleSingleplayerClick()">SINGLEPLAYER</button>
+            </div>
+            <div class="button-container">
+                <a href="https://example.com/coupleplayer" class="button" id="coupleplayer-button">COUPLEPLAYER</a>
+            </div>
+            <div class="button-container">
+                <button class="button" id ="quit-game-button" onclick="handleQuitGameClick()">QUIT GAME</button>
+            </div>
+            <div id="bottom-button-container">
+                <button class="button" onclick="openSettings()">SETTINGS</button>
+                <button class="button" onclick="showSplashText()">RANDOM TEXT</button>
+            </div>
+        </div>
+
+        <div id="made-by">Made with love by saad</div>
+    </div>
+
+    <!-- Settings Menu (Initially Hidden) -->
+<div id="settings-menu">
+    <h2>Settings</h2>
+    <button id="close-settings" onclick="closeSettings()">X</button>
+
+    <!-- Top-left decoration -->
+    <img src="decoration1.gif" alt="Decoration 1" id="decoration1" class="setting-decoration">
+
+    <div class="setting-option">
+        <label for="interest-slider">Adjust Interest Level</label>
+        <div class="slider-container">
+            <input type="range" id="interest-slider" min="0" max="100" value="0" oninput="updateHeartSize()">
+            <span class="heart">❤️</span>
+        </div>
+    </div>
+
+    <div class="setting-option">
+        <label for="unlock-secret-mode">Unlock Secret Mode</label>
+        <button id="unlock-secret-mode" onclick="showAlert('Not available yet… try being cuter?')">Unlock</button>
+    </div>
+
+    <div class="setting-option">
+        <label for="toggle-heartbeat">Toggle Heartbeat Mode</label>
+        <button id="toggle-heartbeat" onclick="showAlert('Too late, already activated.')">Toggle</button>
+    </div>
+    <div class="setting-option">
+        <label for="reset">Reset Feelings:</label>
+        <button onclick="showAlert('Error: Feelings cannot be reset.')">Reset</button>
+    </div>
+    <!-- Bottom-right decoration -->
+     <img src="decoration2.gif" alt="Decoration 2" id="decoration2" class="setting-decoration">
+</div>
+    <script>
+        function showAlert(message) {
+            alert(message);
+        }
+
+        function showSplashText() {
+            const splashTexts = [
+                "Splash Text 1!",
+                "Another Splash Text!",
+                "Yet Another One!",
+                "Greetings from the void!",
+            ];
+
+            const randomIndex = Math.floor(Math.random() * splashTexts.length);
+            const splashTextElement = document.getElementById('splash-text');
+            splashTextElement.textContent = splashTexts[randomIndex];
+            splashTextElement.style.display = 'block';
+        }
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = `${Math.random() * 100}vw`;
+            const duration = Math.random() * 3 + 2;
+            confetti.style.animationDuration = `${duration}s`;
+            confetti.style.animationDelay = `${Math.random() * 2}s`;
+
+            document.getElementById('container').appendChild(confetti);
+            confetti.addEventListener('animationend', () => {
+                confetti.remove();
+            });
+        }
+
+        for (let i = 0; i < 50; i++) {
+              createConfetti();
+        }
+
+        setInterval(createConfetti, 300);
+
+		  // SINGLEPLAYER Button logic
+        function handleSingleplayerClick() {
+            const result = confirm("Playing alone? That’s kinda sad. Maybe try ‘Coupleplayer’ instead… just saying.");
+
+            if (result) {  // User clicked "OK"
+                // Do nothing (stay on the menu)
+            } else {      // User clicked "Cancel"
+                 document.getElementById('coupleplayer-button').focus(); // Focus on coupleplayer
+                         }
+        }
+		  // QUIT Button logic
+        function handleQuitGameClick() {
+             const result = confirm("You’re leaving? Wow. Didn’t think breaking hearts was your thing. 😔");
+              if (!result) {
+                 window.close();
+              }
+        }
+
+          function openSettings() {
+            document.getElementById('settings-menu').style.display = 'block';
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-menu').style.display = 'none';
+        }
+
+        function updateHeartSize() {
+           const slider = document.getElementById('interest-slider');
+           const heart = document.querySelector('.heart');
+           const size = 1 + (slider.value / 100);
+           heart.style.fontSize = `${size}em`;
+	    }
+		    </script>
+</body>
+</html>
